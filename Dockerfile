@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM ubuntu:16.04
 MAINTAINER glw <https://github.com/glw/docker-python3-opencv>
 
 # Thanks to Josip Janzic <josip.janzic@gmail.com> for Opencv installation Dockerfile
@@ -8,6 +8,8 @@ RUN apt-get update && \
         build-essential \
         cmake \
         g++ \
+	python3 \
+	python3-dev \
         git \
         wget \
         unzip \
@@ -26,10 +28,17 @@ RUN apt-get update && \
         libexiv2-dev \
         libboost-python1.58.0 \
         libboost-python-dev \
-        python-all-dev
+        python-all-dev \
+	&& \
 
+	wget https://bootstrap.pypa.io/get-pip.py && \
+	python3 get-pip.py && \
+	rm get-pip.py \
+	&& \
 
-RUN pip install numpy py3exiv2
+        pip --no-cache-dir install \
+        numpy \
+        py3exiv2
 
 WORKDIR /
 ENV OPENCV_VERSION="3.4.1"
@@ -50,10 +59,17 @@ RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip \
   -DBUILD_TESTS=OFF \
   -DBUILD_PERF_TESTS=OFF \
   -DCMAKE_BUILD_TYPE=RELEASE \
-  -DCMAKE_INSTALL_PREFIX=$(python3.6 -c "import sys; print(sys.prefix)") \
-  -DPYTHON_EXECUTABLE=$(which python3.6) \
-  -DPYTHON_INCLUDE_DIR=$(python3.6 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
-  -DPYTHON_PACKAGES_PATH=$(python3.6 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") .. \
+  -DCMAKE_INSTALL_PREFIX=$(python3.5 -c "import sys; print(sys.prefix)") \
+  -DPYTHON_EXECUTABLE=$(which python3.5) \
+  -DPYTHON_INCLUDE_DIR=$(python3.5 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+  -DPYTHON_PACKAGES_PATH=$(python3.5 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") .. \
 && make install \
 && rm /${OPENCV_VERSION}.zip \
 && rm -r /opencv-${OPENCV_VERSION}
+
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Externally accessible data is by default put in /data
+WORKDIR /data
