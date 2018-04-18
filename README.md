@@ -4,14 +4,14 @@
 
 Usage:
 
-    ```bash
+    ```
     docker run -it -v /$(pwd)/:/data garretw/docker_python3_opencv_exiv2:1.0 /bin/bash
     $ python3
     >>> import cv2
     >>> import pyexiv2
     ```
 
-#### -v connects you to your current directory on your host computer. 
+ -v connects you to your current directory on your host computer. 
 
-#### The working directory is set as ```/data``` on the container.
+ The working directory is set as ```/data``` on the container.
 
