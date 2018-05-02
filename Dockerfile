@@ -3,6 +3,8 @@ MAINTAINER glw <https://github.com/glw/docker-python3-opencv>
 
 # Thanks to Josip Janzic <josip.janzic@gmail.com> for Opencv installation Dockerfile
 
+RUN apt-get update && apt-get install -y software-properties-common python-software-properties
+RUN add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
 RUN apt-get update && \
         apt-get install -y \
         build-essential \
@@ -29,6 +31,9 @@ RUN apt-get update && \
         libboost-python1.58.0 \
         libboost-python-dev \
         python-all-dev \
+	gdal-bin \
+	libgdal-dev \
+	python3-gdal \
 	&& \
 
 	wget https://bootstrap.pypa.io/get-pip.py && \
@@ -73,3 +78,9 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Externally accessible data is by default put in /data
 WORKDIR /data
+
+# dont really need COPY command since the volume command puts it in your containers directory
+#copy relevant files for converting tif image to jpg and NDVI calculation
+#COPY NDVI-calc.sh tiff_2_jpg_convert.py write_colormap_file.py /data/
+
+CMD ["/bin/bash"]
