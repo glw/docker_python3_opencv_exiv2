@@ -31,9 +31,9 @@ RUN apt-get update && \
         libboost-python1.58.0 \
         libboost-python-dev \
         python-all-dev \
-	gdal-bin \
-	libgdal-dev \
-	python3-gdal \
+	gdal-bin=2.1.3+dfsg-1~xenial2 \
+	libgdal-dev=2.1.3+dfsg-1~xenial2 \
+	python3-gdal=2.1.3+dfsg-1~xenial2 \
 	&& \
 
 	wget https://bootstrap.pypa.io/get-pip.py && \
