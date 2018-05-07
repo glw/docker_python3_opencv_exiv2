@@ -14,6 +14,7 @@ Usage:
     ```
 
     * Run with
+    
     ```
     docker run -it --rm -v /$(pwd)/:/data garretw/docker_python3_opencv_exiv2:1.1
     $ python3
@@ -29,10 +30,15 @@ Usage:
 
 
  ## Convert TIF to jpg
+ 
  ```
- for file in *.TIF; do python3 tiff_2_jpg_convert.py --input $file; done
+ for file in *.TIF; do python tiff_2_jpg_convert.py --input $file; done
  ```
 
  ## NDVI Calculation use NDVI-calc.sh
-
-
+    
+    For now JPG images used in NDVI calculation are hard coded into the script, so update the file accordingly.
+ 
+    ```
+    ./NDVI-calc.sh
+    ```
