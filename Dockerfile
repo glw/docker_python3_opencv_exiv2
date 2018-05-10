@@ -102,4 +102,8 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1 \
 # Externally accessible data is by default put in /data
 WORKDIR /data
 
+ADD https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/NDVI-calc.sh /data
+ADD https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/tiff_2_jpg_convert.py /data
+ADD https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/write_colormap_file.py /data
+
 CMD ["/bin/bash"]
