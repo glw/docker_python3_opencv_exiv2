@@ -1,39 +1,46 @@
-FROM ubuntu:16.04
+FROM alpine:3.7
+
 MAINTAINER glw <https://github.com/glw/docker-python3-opencv>
 
-# Thanks to Josip Janzic <josip.janzic@gmail.com> for Opencv installation and Cayetano Benavent <cayetano.benavent@geographica.gs> for the GDAL installation
+# Thanks to Josip Janzic <josip.janzic@gmail.com> for Opencv installation
+# and Cayetano Benavent <cayetano.benavent@geographica.gs> for the GDAL installation
+
 
 ENV ROOTDIR /usr/local/
 ENV OPENCV_VERSION="3.4.1"
 ENV GDAL_VERSION="2.2.4"
+ENV CC /usr/bin/clang
+ENV CXX /usr/bin/clang++
 
-RUN apt-get update && \
-        apt-get install -y --no-install-recommends \
-        build-essential \
-        cmake \
-        g++ \
-	python3 \
+# RUN apk update && apk upgrade
+RUN apk add --no-cache \
+        build-base \
+ 	python3 \
 	python3-dev \
         git \
-        yasm \
-        pkg-config \
-        libswscale-dev \
-        libtbb2 \
-        libtbb-dev \
-        libjpeg-dev \
+        openblas-dev \
+        unzip \
+        wget \
+        cmake \
+        gcc \
+        # libtbb@testing  \
+        # libtbb-dev@testing \
+        libjpeg  \
+        libjpeg-turbo-dev \
         libpng-dev \
-        libtiff-dev \
-        libjasper-dev \
-        libavformat-dev \
-        libpq-dev \
+        jasper-dev \
+        tiff-dev \
+        libwebp-dev \
+        clang-dev \
+        linux-headers \
         exiv2 \
-        libexiv2-dev \
-        libboost-python1.58.0 \
-        libboost-python-dev \
-        python-all-dev
-        
-WORKDIR $ROOTDIR/
+        exiv2-dev \
+        boost-python3 \
+        boost-dev \
+        #python-all-dev \
+        py-pip
 
+WORKDIR $ROOTDIR/
 
 
 # install gdal 2.2.4
@@ -42,21 +49,17 @@ ADD http://download.osgeo.org/gdal/2.2.4/gdal-${GDAL_VERSION}.tar.xz /$ROOTDIR/s
 RUN tar -xf gdal-${GDAL_VERSION}.tar.xz \
            && cd gdal-${GDAL_VERSION} \
            && ./configure --with-python --with-geos --with-geotiff --with-jpeg \
-           && make && make install && ldconfig \
-           && apt-get update -y \
-           && apt-get remove -y --purge build-essential
+           && make && make install \
+           # && ldconfig \
+           # && apt-get update -y \
+           # && apt-get remove -y --purge build-essential \
            #&& cd $ROOTDIR && cd src/gdal-${GDAL_VERSION}/swig/python \
            #&& python3 setup.py build \
            #&& python3 setup.py install \
            && cd $ROOTDIR && rm -Rf src/gdal*
 
-# install pip
-WORKDIR /$ROOTDIR
-ADD https://bootstrap.pypa.io/get-pip.py /$ROOTDIR
-RUN cd $ROOTDIR \
-           && python3 get-pip.py \
-	   && rm get-pip.py \
-           && pip3 --no-cache-dir install \
+# pip
+RUN pip install \
            numpy \
            py3exiv2 \
 	   GDAL==${GDAL_VERSION}
@@ -92,18 +95,20 @@ RUN tar -xzf ${OPENCV_VERSION}.tar.gz \
           && rm -rf opencv-${OPENCV_VERSION}/
 
 
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Clean up APK when done.
+ RUN rm -rf /tmp/* && \
+     rm -rf /var/cache/apk/*
+
 
 # set python3 as default python
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1 \
-           && update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
+# RUN update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1 \
+#  && update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
 
 # Externally accessible data is by default put in /data
 WORKDIR /data
 
-ADD https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/NDVI-calc.sh /data
-ADD https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/tiff_2_jpg_convert.py /data
-ADD https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/write_colormap_file.py /data
+RUN wget https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/NDVI-calc.sh \
+ && wget https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/tiff_2_jpg_convert.py \
+ && wget https://raw.githubusercontent.com/glw/docker_python3_opencv_exiv2/master/write_colormap_file.py
 
 CMD ["/bin/bash"]
