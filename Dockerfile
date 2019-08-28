@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER glw <https://github.com/glw/docker-python3-opencv>
 
 # Thanks to Josip Janzic <josip.janzic@gmail.com> for Opencv installation and Cayetano Benavent <cayetano.benavent@geographica.gs> for the GDAL installation
