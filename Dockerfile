@@ -7,13 +7,19 @@ ENV ROOTDIR /usr/local/
 ENV OPENCV_VERSION="3.4.1"
 ENV GDAL_VERSION="2.2.4"
 
+# In 18.04 libjasper-dev doesnt exist so we need to add another repository. To do this we also need gnupg2
+RUN apt-get install -y --no-install-recommends \
+        gnupg2
+RUN echo 'deb http://ftp.fau.de/trinity/trinity-builddeps-r14.0.0/ubuntu/ bionic main' | tee -a /etc/apt/sources.list \
+RUN apt-key adv --keyserver keyserver.quickbuild.io --recv-keys F5CFC95C
+
 RUN apt-get update && \
         apt-get install -y --no-install-recommends \
         build-essential \
         cmake \
         g++ \
-	python3 \
-	python3-dev \
+	      python3 \
+	      python3-dev \
         git \
         yasm \
         pkg-config \
@@ -28,13 +34,11 @@ RUN apt-get update && \
         libpq-dev \
         exiv2 \
         libexiv2-dev \
-        libboost-python1.58.0 \
+        libboost-python1.62.0 \
         libboost-python-dev \
         python-all-dev
 
 WORKDIR $ROOTDIR/
-
-
 
 # install gdal 2.2.4
 WORKDIR /$ROOTDIR/src
@@ -60,7 +64,6 @@ RUN cd $ROOTDIR \
            numpy \
            py3exiv2 \
 	   GDAL==${GDAL_VERSION}
-
 
 # install opencv
 WORKDIR /$ROOTDIR/src
@@ -90,7 +93,6 @@ RUN tar -xzf ${OPENCV_VERSION}.tar.gz \
           && cd $ROOTDIR/src \
           && rm ${OPENCV_VERSION}.tar.gz \
           && rm -rf opencv-${OPENCV_VERSION}/
-
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
