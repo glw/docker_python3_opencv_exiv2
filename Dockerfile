@@ -48,7 +48,7 @@ RUN tar -xf gdal-${GDAL_VERSION}.tar.xz \
            #&& cd $ROOTDIR && cd src/gdal-${GDAL_VERSION}/swig/python \
            #&& python3 setup.py build \
            #&& python3 setup.py install \
-           #&& cd $ROOTDIR && rm -Rf src/gdal*
+           && cd $ROOTDIR && rm -Rf src/gdal*
 
 # install pip
 WORKDIR /$ROOTDIR
