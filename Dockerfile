@@ -44,7 +44,7 @@ RUN tar -xf gdal-${GDAL_VERSION}.tar.xz \
            && ./configure --with-python --with-geos --with-geotiff --with-jpeg \
            && make && make install && ldconfig \
            && apt-get update -y \
-           && apt-get remove -y --purge build-essential
+           && apt-get remove -y --purge build-essential \
            #&& cd $ROOTDIR && cd src/gdal-${GDAL_VERSION}/swig/python \
            #&& python3 setup.py build \
            #&& python3 setup.py install \
